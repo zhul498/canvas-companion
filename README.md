@@ -182,7 +182,4 @@ src/
     ├── icon48.png
     └── icon128.png
 ```
-
 ---
-
-Co-authored by Claude Sonnet 4.6

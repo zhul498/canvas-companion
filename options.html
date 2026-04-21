@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canvas Companion — Settings</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div class="logo">
+        <img src="icons/icon48.png" alt="">
+        <h1>Canvas Companion</h1>
+      </div>
+      <p class="subtitle">Configure your Canvas connection and preferences</p>
+    </header>
+
+    <main>
+      <!-- CONNECTION -->
+      <section class="card">
+        <h2>Canvas Connection</h2>
+
+        <div class="field">
+          <label for="domain">Canvas Domain</label>
+          <div class="input-row">
+            <span class="prefix">https://</span>
+            <input type="text" id="domain" placeholder="canvas.university.edu" autocomplete="off" spellcheck="false">
+          </div>
+          <p class="hint">
+            The primary domain setup happens in the extension popup. Editing it here also works,
+            but won't re-request host permissions or re-register the content script.
+            Use the popup's "Change" button for a full domain switch.
+          </p>
+        </div>
+
+        <div class="field">
+          <label for="token">API Token <span style="font-weight:400;color:#888">(optional)</span></label>
+          <div class="token-row">
+            <input type="password" id="token" placeholder="Only needed if cookie auth fails for badge" autocomplete="off">
+            <button class="btn-icon" id="toggle-token" title="Show/hide token">👁</button>
+          </div>
+          <p class="hint">
+            <strong>You don't normally need this.</strong>
+            The dashboard panels use your existing Canvas login session (cookie-based auth) — no token required.
+            A token is only useful if the background badge counter stops working.
+            Generate one in Canvas: <strong>Account → Settings → Approved Integrations → New Access Token</strong>.
+          </p>
+        </div>
+
+        <button class="btn-primary" id="test-btn">Test Connection</button>
+        <div id="test-result" class="test-result hidden"></div>
+      </section>
+
+      <!-- BEHAVIOR -->
+      <section class="card">
+        <h2>Behavior</h2>
+
+        <div class="toggle-field">
+          <div>
+            <strong>Open links in new tab</strong>
+            <p>When clicking an assignment, open it in a new tab instead of the current one</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="new-tab">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="separator"></div>
+
+        <div class="field">
+          <label>When marking an item as done</label>
+          <div class="radio-group">
+            <label class="radio-opt">
+              <input type="radio" name="done-behavior" value="hide"> 
+              <span>Remove it from the list</span>
+            </label>
+            <label class="radio-opt">
+              <input type="radio" name="done-behavior" value="strike"> 
+              <span>Strike it through (keep visible)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="separator"></div>
+
+        <div class="field">
+          <label>Due date display</label>
+          <div class="radio-group">
+            <label class="radio-opt">
+              <input type="radio" name="date-format" value="relative"> 
+              <span>Relative (e.g. "3d left", "overdue")</span>
+            </label>
+            <label class="radio-opt">
+              <input type="radio" name="date-format" value="absolute"> 
+              <span>Absolute (e.g. "Apr 22 11:59 PM")</span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- DISPLAY -->
+      <section class="card">
+        <h2>Display</h2>
+
+        <div class="toggle-field">
+          <div>
+            <strong>Show courses with no due items</strong>
+            <p>Display course cards even when there are no upcoming assignments</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="show-empty">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="separator"></div>
+
+        <div class="toggle-field">
+          <div>
+            <strong>Show overdue items</strong>
+            <p>Include assignments that are past due in the list</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="show-overdue">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="separator"></div>
+
+        <div class="field">
+          <label for="lookahead">Look ahead (days)</label>
+          <input type="number" id="lookahead" min="1" max="90" value="7" style="width:80px">
+          <p class="hint">Only show assignments due within this many days</p>
+        </div>
+      </section>
+
+      <!-- DATA -->
+      <section class="card">
+        <h2>Data</h2>
+        <div class="btn-row">
+          <button class="btn-danger" id="clear-dismissed">Reset Dismissed Items</button>
+          <button class="btn-danger" id="clear-all">Clear All Data</button>
+        </div>
+        <p class="hint">Reset dismissed items if you want previously-hidden tasks to reappear.</p>
+      </section>
+    </main>
+
+    <footer>
+      <button class="btn-primary large" id="save-btn">Save Settings</button>
+      <div id="save-msg" class="save-msg hidden">✓ Saved!</div>
+    </footer>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>

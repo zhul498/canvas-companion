@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canvas Companion</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- ── Header ─────────────────────────────────────────────────────── -->
+    <header>
+      <div class="header-left">
+        <img src="icons/icon32.png" alt="" class="logo-img">
+        <span class="app-name">Canvas Companion</span>
+      </div>
+      <div class="header-right">
+        <!-- Only shown when a domain is configured -->
+        <a id="open-canvas-link" class="icon-btn hidden" title="Open Canvas dashboard" target="_blank" rel="noopener noreferrer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+        </a>
+        <button id="open-options-btn" class="icon-btn" title="Advanced settings">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ── STATE: first-run setup ─────────────────────────────────────── -->
+    <div id="view-setup" class="hidden">
+      <div class="setup-hero">
+        <div class="setup-icon">🎓</div>
+        <h2>Welcome to Canvas Companion</h2>
+        <p>Enter your Canvas domain to start seeing upcoming assignments directly on your dashboard.</p>
+      </div>
+
+      <div class="setup-form">
+        <label class="field-label" for="setup-domain-input">Canvas Domain</label>
+        <div class="input-row" id="setup-input-row">
+          <span class="input-prefix">https://</span>
+          <input
+            type="text"
+            id="setup-domain-input"
+            placeholder="canvas.university.edu"
+            autocomplete="off"
+            spellcheck="false"
+          >
+        </div>
+
+        <button class="btn-primary" id="setup-check-btn">Check Connection</button>
+
+        <div id="setup-status" class="status-msg hidden"></div>
+
+        <p class="setup-hint">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          Make sure you're already logged into Canvas in this browser. No API token is required.
+        </p>
+      </div>
+    </div>
+
+    <!-- ── STATE: configured settings panel ──────────────────────────── -->
+    <div id="view-settings" class="hidden">
+
+      <!-- Connection status card -->
+      <div class="settings-section">
+        <div class="section-label">Connection</div>
+        <div class="domain-card">
+          <div class="domain-card-top">
+            <div class="domain-info">
+              <span class="domain-text" id="domain-display"></span>
+              <span class="conn-pill" id="conn-pill">Checking…</span>
+            </div>
+            <div class="domain-btns">
+              <button class="link-btn" id="recheck-btn">Re-check</button>
+              <button class="link-btn" id="show-change-btn">Change</button>
+            </div>
+          </div>
+
+          <!-- Change-domain form, hidden by default -->
+          <div id="change-domain-form" class="subdomain-form hidden">
+            <div class="input-row" id="change-input-row">
+              <span class="input-prefix">https://</span>
+              <input
+                type="text"
+                id="change-domain-input"
+                placeholder="canvas.university.edu"
+                spellcheck="false"
+                autocomplete="off"
+              >
+            </div>
+            <div class="subdomain-actions">
+              <button class="btn-sm btn-primary-sm" id="change-check-btn">Check &amp; Save</button>
+              <button class="btn-sm" id="cancel-change-btn">Cancel</button>
+            </div>
+            <div id="change-status" class="status-msg hidden"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Display settings -->
+      <div class="settings-section">
+        <div class="section-label">Display Settings</div>
+        <div class="setting-row">
+          <label for="lookahead-input" class="setting-label">Assignments due within</label>
+          <div class="number-wrap">
+            <input type="number" id="lookahead-input" min="1" max="90" value="7">
+            <span class="unit-label">days</span>
+          </div>
+        </div>
+        <div class="setting-row">
+          <label class="setting-label">Include overdue items</label>
+          <label class="toggle">
+            <input type="checkbox" id="show-overdue-toggle" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="save-row">
+          <button class="btn-sm btn-primary-sm" id="save-display-btn">Save</button>
+          <span class="save-confirm hidden" id="save-confirm">✓ Saved</span>
+        </div>
+      </div>
+
+      <!-- Footer hint -->
+      <div class="info-footer">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+        Assignment panels appear on your Canvas dashboard automatically.
+        Reload any open Canvas tab after changing settings.
+      </div>
+
+    </div><!-- /view-settings -->
+
+  </div><!-- /app -->
+  <script src="popup.js"></script>
+</body>
+</html>
